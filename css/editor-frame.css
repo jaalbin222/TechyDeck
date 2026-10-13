@@ -1,0 +1,56 @@
+/* Injected into the deck iframe. Keep rules narrow so the deck's own CSS still wins. */
+html.td-slide-host:not(.td-printing) .td-slide:not(.td-active) {
+  display: none !important;
+}
+
+html.td-slide-host,
+html.td-slide-host body {
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+html.td-slide-host .td-slide.td-active {
+  box-sizing: border-box !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+html.td-editing .td-hover {
+  outline: 2px solid rgba(30, 77, 56, 0.9);
+  outline-offset: 3px;
+  cursor: text;
+}
+
+html.td-editing img.td-hover {
+  outline: 2px dashed #9a3f1d;
+  outline-offset: 4px;
+  cursor: pointer;
+}
+
+html.td-editing [contenteditable="true"] {
+  outline: 2px solid #1e4d38;
+  outline-offset: 3px;
+  caret-color: #1e4d38;
+}
+
+@media print {
+  html.td-slide-host,
+  html.td-slide-host body {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  html.td-slide-host .td-slide,
+  html.td-slide-host .td-slide.td-active {
+    display: flex !important;
+    flex-direction: column;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 160mm !important;
+    overflow: visible !important;
+    break-after: page;
+    page-break-after: always;
+  }
+}

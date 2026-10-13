@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editor — TechyDeck</title>
+  <meta name="description" content="Upload or paste an HTML presentation, edit it in the browser, and export or share it.">
+  <meta name="theme-color" content="#1e4d38">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,620&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body data-view="start">
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="toolbar">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#1e4d38"/><path d="M7 17V7h2.2l2.8 4.6L14.8 7H17v10h-1.8V10.2L12.4 15h-1.1L8.8 10.2V17z" fill="#f4f0e6"/></svg>
+      <span>TechyDeck</span>
+    </a>
+    <p class="deck-name editor-only" id="deck-name"></p>
+    <p class="toolbar-note start-only">Files stay in this browser.</p>
+    <span class="spacer"></span>
+    <div class="seg editor-only" role="group" aria-label="Editing mode">
+      <button type="button" id="btn-edit" aria-pressed="true">Edit</button>
+      <button type="button" id="btn-preview" aria-pressed="false">Preview</button>
+    </div>
+    <div class="tool-group editor-only">
+      <button type="button" class="btn btn-ghost" id="btn-undo" disabled title="Undo (Ctrl+Z)">Undo</button>
+      <button type="button" class="btn btn-ghost" id="btn-redo" disabled title="Redo (Ctrl+Shift+Z)">Redo</button>
+    </div>
+    <div class="tool-group editor-only">
+      <button type="button" class="btn btn-ghost" id="btn-export">Export HTML</button>
+      <button type="button" class="btn btn-ghost" id="btn-pdf">Export PDF</button>
+      <button type="button" class="btn btn-primary" id="btn-share">Share</button>
+    </div>
+    <button type="button" class="btn btn-ghost editor-only" id="btn-open">Open</button>
+  </header>
+
+  <div class="workspace" id="content">
+    <aside class="sidebar editor-only" aria-label="Slides">
+      <div class="side-head">
+        <h2 id="slide-heading">Slides</h2>
+        <p id="slide-meta"></p>
+      </div>
+      <ol id="slide-list"></ol>
+      <p class="doc-note" id="doc-note" hidden>This file is one continuous document. Slide actions appear when the HTML has two or more sibling <code>.slide</code> or <code>section</code> elements, or reveal.js sections.</p>
+    </aside>
+    <div class="main">
+      <section class="start start-only" aria-labelledby="start-title">
+        <div class="start-card">
+          <h1 id="start-title">Open a deck</h1>
+          <p class="lede">Upload or paste the HTML an AI wrote. Edit it here, then export a file or a link the next person can keep editing.</p>
+          <div class="resume" id="resume-card" hidden>
+            <p id="resume-meta">A deck is saved in this browser.</p>
+            <div class="row">
+              <button type="button" class="btn btn-primary" id="btn-resume">Continue</button>
+              <button type="button" class="btn btn-ghost" id="btn-discard">Discard</button>
+            </div>
+          </div>
+          <p class="start-error" id="start-error" hidden></p>
+          <label class="dropzone" id="dropzone" for="file-input">
+            <strong>Drop an HTML file</strong>
+            <span>or click to browse. .html and .htm</span>
+          </label>
+          <input class="file-input" id="file-input" type="file" accept=".html,.htm,text/html">
+          <div class="sample-row">
+            <button type="button" class="sample-card" data-sample="quarterly">
+              <span class="eyebrow">Sample</span>
+              <strong>Q3 board review</strong>
+              <span>Six <code>.slide</code> sections, with figures and a typo.</span>
+            </button>
+            <button type="button" class="sample-card" data-sample="launch">
+              <span class="eyebrow">Sample</span>
+              <strong>Fieldnote launch</strong>
+              <span>Six reveal.js sections and a price to change.</span>
+            </button>
+          </div>
+          <div class="paste-block">
+            <span class="section-label">Paste HTML</span>
+            <textarea id="paste-html" spellcheck="false" placeholder="<!DOCTYPE html>…"></textarea>
+            <div class="row">
+              <button type="button" class="btn btn-primary" id="load-paste">Load HTML</button>
+              <button type="button" class="note-btn" id="load-note">Try a one-page note</button>
+            </div>
+            <p class="fine">The note has no slide markup, so it opens as a single editable document.</p>
+          </div>
+        </div>
+      </section>
+      <section class="stage editor-only" aria-label="Deck">
+        <div class="frame-shell">
+          <iframe id="deck-frame" title="Deck" sandbox="allow-scripts allow-modals allow-forms allow-popups allow-downloads"></iframe>
+          <div id="frame-overlay" hidden>
+            <div>
+              <p id="frame-overlay-msg">Opening deck…</p>
+              <button type="button" class="btn btn-ghost" id="frame-dismiss" hidden>Show the deck anyway</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="hintbar editor-only">
+    <p id="status" role="status"></p>
+    <p id="hint"></p>
+    <p id="save-state"></p>
+  </footer>
+  <p id="toast" role="status" hidden></p>
+
+  <dialog id="share-dialog" aria-labelledby="share-title">
+    <h2 id="share-title">Share an editable link</h2>
+    <div id="share-ok">
+      <p>Anyone with this link can open the deck and keep editing. TechyDeck does not upload it — the deck is inside the link. Don’t post it publicly if the material is confidential.</p>
+      <input id="share-url" type="text" readonly aria-label="Share link">
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="share-copy">Copy link</button>
+        <button type="button" class="btn btn-ghost" id="share-close">Close</button>
+      </div>
+      <p class="fine" id="share-size"></p>
+    </div>
+    <div id="share-big" hidden>
+      <p id="share-big-msg"></p>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="share-download">Download HTML</button>
+        <button type="button" class="btn btn-ghost" id="share-close-big">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="js/lz-string.js"></script>
+  <script src="js/app.js"></script>
+  <noscript>TechyDeck needs JavaScript. Decks are edited in your browser and are not uploaded.</noscript>
+</body>
+</html>
