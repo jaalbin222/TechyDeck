@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Harbor &amp; Co. Q3 FY26 review</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f6f3ec; color: #1a2420; }
+    body { font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+    .slide {
+      min-height: 100vh;
+      height: 100vh;
+      padding: 32px 56px 28px;
+      display: flex;
+      flex-direction: column;
+      background: #f6f3ec;
+      scroll-snap-align: start;
+    }
+    .top, .bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #5e6b64;
+    }
+    .body { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+    h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; letter-spacing: -0.03em; margin: 0; }
+    h1 { font-size: clamp(40px, 5vw, 60px); line-height: 1.02; max-width: 12em; }
+    h2 { font-size: clamp(32px, 4vw, 48px); line-height: 1.08; }
+    .kicker { margin: 0 0 12px; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; color: #1e4d38; }
+    .sub { font-size: 20px; max-width: 36rem; color: #3d4a44; }
+    .cover { background: #17382c; color: #f6f3ec; }
+    .cover .top, .cover .bottom, .cover .kicker { color: #c5ddd2; }
+    .cover .sub { color: #e4efe9; }
+    .mark { width: 72px; height: 72px; border-radius: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
+    .stat { background: white; border-radius: 14px; padding: 16px 16px 14px; border: 1px solid #e6dfd2; }
+    .num { font-family: Georgia, serif; font-size: clamp(28px, 3vw, 40px); margin: 0; letter-spacing: -0.03em; }
+    .lbl { margin: 6px 0 0; color: #5e6b64; font-size: 14px; }
+    .cols { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center; }
+    .bars { display: grid; gap: 12px; margin-top: 8px; }
+    .bar { display: grid; grid-template-columns: 110px 1fr auto; gap: 10px; align-items: center; }
+    .track, .fill { display: block; height: 10px; border-radius: 99px; }
+    .track { background: #e7e1d4; }
+    .fill { background: #1e4d38; }
+    .chart { width: min(100%, 360px); height: auto; border-radius: 12px; border: 1px solid #e6dfd2; background: white; }
+    .callout { margin-top: 22px; padding: 18px 20px; background: white; border-left: 4px solid #9a3f1d; border-radius: 0 12px 12px 0; font-size: 20px; }
+    ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+    li { background: white; border-radius: 12px; padding: 14px 16px; border: 1px solid #e6dfd2; }
+    li strong { display: block; }
+    .asks { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+    .ask { background: #17382c; color: #f6f3ec; border-radius: 16px; padding: 20px; }
+    .ask p { margin: 8px 0 0; color: #d5e6de; }
+    .ask .num { color: #f6f3ec; }
+    @media (max-width: 800px) {
+      .slide { padding: 24px; }
+      .stats, .cols, .asks { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide cover">
+      <div class="top"><p>Harbor &amp; Co.</p><p>Q3 FY26</p></div>
+      <div class="body">
+        <p class="kicker">Operating committee · 14 October 2026</p>
+        <h1>The quarter the pipeline caught up</h1>
+        <p class="sub">Board review. The figures below are the ones the room is allowed to correct.</p>
+      </div>
+      <div class="bottom">
+        <img class="mark" alt="Harbor and Co. mark" width="72" height="72" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='12' fill='%23f3efe4'/%3E%3Cpath d='M18 58V22h10l12 20 12-20h10v36h-8V36L44 54h-8L24 36v22z' fill='%2317382c'/%3E%3C/svg%3E">
+        <p>Confidential</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="top"><p>Harbor &amp; Co.</p><p>Results</p></div>
+      <div class="body">
+        <p class="kicker">Q3 in four numbers</p>
+        <h2>Revenue held. Retention did the work.</h2>
+        <div class="stats">
+          <div class="stat"><p class="num">$18.4M</p><p class="lbl">Revenue, +12% year over year</p></div>
+          <div class="stat"><p class="num">61%</p><p class="lbl">Gross margin</p></div>
+          <div class="stat"><p class="num">118%</p><p class="lbl">Net revenue retention</p></div>
+          <div class="stat"><p class="num">26</p><p class="lbl">New logos</p></div>
+        </div>
+      </div>
+      <div class="bottom"><p>Click any figure to replace it</p><p>02</p></div>
+    </section>
+
+    <section class="slide">
+      <div class="top"><p>Harbor &amp; Co.</p><p>Mix</p></div>
+      <div class="body">
+        <div class="cols">
+          <div>
+            <p class="kicker">Where growth came from</p>
+            <h2>Enterprise closed the quarter.</h2>
+            <div class="bars">
+              <div class="bar"><span>Enterprise</span><span class="track"><span class="fill" style="width:82%"></span></span><strong>$6.2M</strong></div>
+              <div class="bar"><span>Mid-market</span><span class="track"><span class="fill" style="width:64%"></span></span><strong>$4.8M</strong></div>
+              <div class="bar"><span>Services</span><span class="track"><span class="fill" style="width:38%"></span></span><strong>$2.1M</strong></div>
+            </div>
+          </div>
+          <img class="chart" alt="Quarterly bookings chart" width="320" height="180" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Crect width='320' height='180' fill='%23ffffff'/%3E%3Crect x='36' y='96' width='40' height='52' fill='%231e4d38'/%3E%3Crect x='104' y='70' width='40' height='78' fill='%231e4d38'/%3E%3Crect x='172' y='42' width='40' height='106' fill='%239a3f1d'/%3E%3Crect x='240' y='78' width='40' height='70' fill='%231e4d38'/%3E%3C/svg%3E">
+        </div>
+      </div>
+      <div class="bottom"><p>Bookings by segment</p><p>03</p></div>
+    </section>
+
+    <section class="slide">
+      <div class="top"><p>Harbor &amp; Co.</p><p>Renewal</p></div>
+      <div class="body">
+        <p class="kicker">One account, most of the risk</p>
+        <h2>The Northstar acount</h2>
+        <p class="callout">Northstar renews 3 November at $1.1M. Coverage on the rest of the book is 2.4×. This is the slide someone will mark up in the room.</p>
+      </div>
+      <div class="bottom"><p>Fix the typo before it circulates</p><p>04</p></div>
+    </section>
+
+    <section class="slide">
+      <div class="top"><p>Harbor &amp; Co.</p><p>Risks</p></div>
+      <div class="body">
+        <p class="kicker">What could still miss</p>
+        <h2>Three items, none of them abstract.</h2>
+        <ul>
+          <li><strong>Implementation hiring</strong> Four open roles. Two starts slipped into November, which puts January go-lives on the edge.</li>
+          <li><strong>Services margin</strong> 44% this quarter against a 50% plan. The gap is subcontractors on two migrations.</li>
+          <li><strong>A single renewal</strong> If Northstar slips a quarter, Q4 growth prints at 4%, not 12%.</li>
+        </ul>
+      </div>
+      <div class="bottom"><p>Operating committee</p><p>05</p></div>
+    </section>
+
+    <section class="slide">
+      <div class="top"><p>Harbor &amp; Co.</p><p>Decisions</p></div>
+      <div class="body">
+        <p class="kicker">What we need today</p>
+        <h2>Two decisions, then we leave.</h2>
+        <div class="asks">
+          <div class="ask"><p class="num">4</p><p>Approve implementation hires so the January go-lives stay dated.</p></div>
+          <div class="ask"><p class="num">3 Nov</p><p>Hold list price until the Northstar renewal is signed. No mid-cycle discount.</p></div>
+        </div>
+      </div>
+      <div class="bottom"><p>Prepared for the operating committee</p><p>06</p></div>
+    </section>
+  </main>
+</body>
+</html>

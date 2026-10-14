@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TechyDeck — Edit HTML presentations without going back to the chatbot</title>
+  <meta name="description" content="TechyDeck opens AI-built HTML presentations so colleagues can fix a number, swap an image, or reorder slides — then export a file, a PDF, or a link. No account and no server.">
+  <meta name="theme-color" content="#1e4d38">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,620&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="nav">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#1e4d38"/><path d="M7 17V7h2.2l2.8 4.6L14.8 7H17v10h-1.8V10.2L12.4 15h-1.1L8.8 10.2V17z" fill="#f4f0e6"/></svg>
+      <span>TechyDeck</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a class="btn btn-primary" href="app.html">Open editor</a>
+    </nav>
+  </header>
+
+  <main id="content">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">HTML decks, after the chatbot</p>
+        <h1>Fix the deck without reopening the chat.</h1>
+        <p class="lede">People now build presentations as HTML with Claude, ChatGPT, and Cursor. Once the file is shared, a colleague still cannot change a number or fix a typo. TechyDeck opens that file in the browser so anyone in the room can edit it, then hands it back as a file, a PDF, or a link.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-lg" href="app.html">Open the editor</a>
+          <a class="btn btn-ghost btn-lg" href="app.html?sample=quarterly">Try a sample deck</a>
+        </div>
+        <p class="fine">No account. Nothing is uploaded. The deck stays in this browser unless you copy a share link.</p>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock-top">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <span class="mock-file">q3-review.html</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-slides">
+            <span class="on">01 Cover</span>
+            <span>02 Numbers</span>
+            <span>03 Segments</span>
+            <span>04 Renewal</span>
+          </div>
+          <div class="mock-slide">
+            <p class="kicker">Q3 FY26</p>
+            <h2>Revenue</h2>
+            <p class="figure"><span>$18.4M</span></p>
+            <p class="mock-note">Click the figure. Type the right one. The file updates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="problem-title">
+      <h2 id="problem-title">The last mile of an AI deck is a human edit.</h2>
+      <div class="quotes">
+        <article>
+          <h3>Finance</h3>
+          <p>“The figure on slide 4 is last month’s.”</p>
+        </article>
+        <article>
+          <h3>Client</h3>
+          <p>“Swap our logo before the meeting.”</p>
+        </article>
+        <article>
+          <h3>Founder</h3>
+          <p>“Move the ask to the front.”</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="how" aria-labelledby="how-title">
+      <h2 id="how-title">Three steps, then the file leaves the chat.</h2>
+      <div class="steps">
+        <article class="step">
+          <span>01</span>
+          <h3>Bring the HTML</h3>
+          <p>Upload the file an LLM generated, or paste the markup. Two sample decks are built in if you want to see the edit before you have a file.</p>
+        </article>
+        <article class="step">
+          <span>02</span>
+          <h3>Click what is wrong</h3>
+          <p>Text becomes editable where you click. Images can be replaced. When the file is a deck, slides can be duplicated, deleted, and reordered.</p>
+        </article>
+        <article class="step">
+          <span>03</span>
+          <h3>Hand it back</h3>
+          <p>Download one HTML file, print to PDF, or copy a link. The link holds the compressed deck, so the next person opens it ready to edit. No server stores it.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="features" aria-labelledby="features-title">
+      <h2 id="features-title">What the editor actually does</h2>
+      <div class="features">
+        <div>
+          <h3>Inline text</h3>
+          <p>Click a heading, a figure, or a caption. Undo and redo cover the session, and the browser keeps the latest copy.</p>
+        </div>
+        <div>
+          <h3>Images</h3>
+          <p>Click an image and choose a replacement. The new file is embedded, so the export does not depend on the original path.</p>
+        </div>
+        <div>
+          <h3>Slides, when the markup has them</h3>
+          <p>Recognizes reveal.js sections, sibling <code>.slide</code> elements, and sibling <code>section</code> elements. Anything else is one document.</p>
+        </div>
+        <div>
+          <h3>A link instead of an account</h3>
+          <p>Share encodes the deck with lz-string into the URL hash. If the deck is too large, TechyDeck says so and offers the download.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="samples-title">
+      <h2 id="samples-title">Open a deck that already looks finished</h2>
+      <div class="sample-row">
+        <a class="sample-card" href="app.html?sample=quarterly">
+          <span class="eyebrow">Sample</span>
+          <strong>Q3 board review</strong>
+          <span>Six slides marked with <code>.slide</code>. A fictional operating review, including a typo worth fixing.</span>
+        </a>
+        <a class="sample-card" href="app.html?sample=launch">
+          <span class="eyebrow">Sample</span>
+          <strong>Fieldnote launch</strong>
+          <span>Six reveal.js sections for a product meeting. Pricing is a number someone will want to change.</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <section class="band">
+    <div class="band-inner">
+      <div>
+        <h2>The chat can write the first draft.</h2>
+        <p>The people who have to stand in front of it should be able to correct the file.</p>
+      </div>
+      <a class="btn btn-primary btn-lg" href="app.html">Start editing</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>TechyDeck. A static editor. No backend.</span>
+    <a href="app.html">Editor</a>
+  </footer>
+  <noscript>TechyDeck’s editor needs JavaScript. It still runs entirely in your browser.</noscript>
+</body>
+</html>

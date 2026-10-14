@@ -1,0 +1,102 @@
+:root {
+  --paper: #f3efe6;
+  --paper-2: #fbf8f3;
+  --ink: #1c1915;
+  --ink-soft: #5c564c;
+  --line: #e3d9c8;
+  --green: #1e4d38;
+  --green-deep: #143628;
+  --moss: #e5f0ea;
+  --clay: #9a3f1d;
+  --shadow: 0 18px 50px rgba(28, 25, 21, 0.08);
+  --serif: Fraunces, "Iowan Old Style", Palatino, Georgia, serif;
+  --sans: Outfit, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+::selection { background: #cfe0d6; }
+
+img { max-width: 100%; }
+
+a { color: inherit; }
+
+button, input, textarea { font: inherit; color: inherit; }
+
+button { cursor: pointer; }
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  background: white;
+  color: var(--ink);
+  padding: 8px 12px;
+  z-index: 20;
+  border-radius: 8px;
+}
+
+.skip:focus { top: 12px; }
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-size: 18px;
+}
+
+.logo svg { width: 24px; height: 24px; flex: none; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  text-decoration: none;
+  line-height: 1.2;
+  background: transparent;
+}
+
+.btn-primary { background: var(--green); color: #f6f3ec; }
+.btn-primary:hover { background: var(--green-deep); }
+
+.btn-ghost {
+  border-color: #d5cbb8;
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn-ghost:hover { background: rgba(30, 77, 56, 0.06); }
+
+.btn-lg { padding: 13px 18px; }
+
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}

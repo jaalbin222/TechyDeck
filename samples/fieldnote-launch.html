@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Fieldnote launch</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f4f7fb; color: #172033; }
+    body { font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+    .reveal, .slides { height: 100%; }
+    section {
+      min-height: 100vh;
+      height: 100vh;
+      padding: 36px 60px 28px;
+      display: flex;
+      flex-direction: column;
+      background: #f4f7fb;
+    }
+    .top, .bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #5c6b80;
+    }
+    .body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    h1, h2 { font-weight: 560; letter-spacing: -0.04em; margin: 0; line-height: 1.05; }
+    h1 { font-size: clamp(44px, 6vw, 72px); max-width: 12ch; }
+    h2 { font-size: clamp(32px, 4vw, 48px); max-width: 18ch; }
+    .kicker { margin: 0 0 12px; color: #1d4e89; letter-spacing: 0.14em; text-transform: uppercase; font-size: 13px; }
+    .sub { font-size: 20px; max-width: 36rem; color: #3c4b63; }
+    .cover { background: #142033; color: #f4f7fb; }
+    .cover .kicker, .cover .top, .cover .bottom { color: #b7c6dc; }
+    .cover .sub { color: #d5e0ee; }
+    .mark { width: 84px; height: 84px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 26px; }
+    .card { background: white; border-radius: 14px; padding: 16px; border: 1px solid #e1e7f0; }
+    .card strong { display: block; margin-bottom: 6px; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+    .product { width: 100%; height: auto; border-radius: 16px; border: 1px solid #d5deea; background: white; }
+    .price { font-size: clamp(56px, 8vw, 88px); letter-spacing: -0.05em; margin: 8px 0; font-weight: 560; }
+    .price span { font-size: 0.35em; letter-spacing: 0; color: #5c6b80; }
+    table { width: 100%; border-collapse: collapse; margin-top: 18px; background: white; border-radius: 12px; overflow: hidden; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid #e6edf5; }
+    th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #5c6b80; }
+    .ask { margin-top: 20px; padding: 16px 18px; background: #1d4e89; color: white; border-radius: 14px; max-width: 40rem; }
+    @media (max-width: 800px) {
+      section { padding: 24px; }
+      .grid, .split { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="cover">
+        <div class="top"><p>Fieldnote</p><p>Launch review</p></div>
+        <div class="body">
+          <p class="kicker">Product meeting · 22 October</p>
+          <h1>Introducing Fieldnote</h1>
+          <p class="sub">A client page that replaces the Monday status meeting. This deck is reveal.js markup without the reveal.js runtime, so it stays a single file.</p>
+        </div>
+        <div class="bottom">
+          <img class="mark" alt="Fieldnote mark" width="84" height="84" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='16' fill='%231d4e89'/%3E%3Cpath d='M24 26h22l12 12v24H24z' fill='none' stroke='%23f4f7fb' stroke-width='3'/%3E%3Cpath d='M46 26v12h12' fill='none' stroke='%23f4f7fb' stroke-width='3'/%3E%3C/svg%3E">
+          <p>Internal</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="top"><p>Fieldnote</p><p>Problem</p></div>
+        <div class="body">
+          <p class="kicker">What clients told sales</p>
+          <h2>Status meetings are the product.</h2>
+          <div class="grid">
+            <div class="card"><strong>41 minutes</strong> Average weekly status call across the last 20 pilots.</div>
+            <div class="card"><strong>3 tools</strong> The update lives in email, a slide, and a spreadsheet.</div>
+            <div class="card"><strong>0 owners</strong> After the call, nobody can find the decision.</div>
+          </div>
+        </div>
+        <div class="bottom"><p>Pilot interviews, September</p><p>02</p></div>
+      </section>
+
+      <section>
+        <div class="top"><p>Fieldnote</p><p>Product</p></div>
+        <div class="body">
+          <div class="split">
+            <div>
+              <p class="kicker">What we ship</p>
+              <h2>A page clients actually read.</h2>
+              <p class="sub">One link per account. Decisions, dates, and the open question. No login for the client.</p>
+            </div>
+            <img class="product" alt="Fieldnote page preview" width="440" height="260" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 440 260'%3E%3Crect width='440' height='260' rx='16' fill='%23ffffff'/%3E%3Crect x='24' y='24' width='180' height='16' rx='4' fill='%231d4e89'/%3E%3Crect x='24' y='56' width='280' height='10' rx='3' fill='%23d5deea'/%3E%3Crect x='24' y='76' width='240' height='10' rx='3' fill='%23d5deea'/%3E%3Crect x='24' y='112' width='392' height='112' rx='10' fill='%23f4f7fb'/%3E%3Crect x='40' y='132' width='120' height='12' rx='3' fill='%23142233'/%3E%3Crect x='40' y='156' width='200' height='8' rx='3' fill='%239aabbf'/%3E%3C/svg%3E">
+          </div>
+        </div>
+        <div class="bottom"><p>Click the picture to drop in a real screenshot</p><p>03</p></div>
+      </section>
+
+      <section>
+        <div class="top"><p>Fieldnote</p><p>Pricing</p></div>
+        <div class="body">
+          <p class="kicker">What sales can say out loud</p>
+          <h2>Per seat, billed annually.</h2>
+          <p class="price">$24 <span>/ seat / month</span></p>
+          <p class="sub">Minimum 15 seats. Implementation is a separate $6,000 statement of work. Change the price here if the room decides otherwise.</p>
+        </div>
+        <div class="bottom"><p>Not a discount slide</p><p>04</p></div>
+      </section>
+
+      <section>
+        <div class="top"><p>Fieldnote</p><p>Calendar</p></div>
+        <div class="body">
+          <p class="kicker">From this meeting to first revenue</p>
+          <h2>Launch calendar</h2>
+          <table>
+            <thead><tr><th>Date</th><th>Milestone</th><th>Owner</th></tr></thead>
+            <tbody>
+              <tr><td>29 Oct</td><td>Pricing page and sales one-pager</td><td>Maya</td></tr>
+              <tr><td>12 Nov</td><td>Pilot accounts migrated</td><td>Chris</td></tr>
+              <tr><td>1 Dec</td><td>Open self-serve for teams under 30</td><td>Priya</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bottom"><p>Dates are editable</p><p>05</p></div>
+      </section>
+
+      <section>
+        <div class="top"><p>Fieldnote</p><p>Ask</p></div>
+        <div class="body">
+          <p class="kicker">Decision</p>
+          <h2>Ship the page. Keep the meeting for escalations only.</h2>
+          <p class="ask">Approve the $24 price and the 1 December self-serve date. Sales stops scheduling a weekly status call for any account that has an active Fieldnote page.</p>
+        </div>
+        <div class="bottom"><p>Product review</p><p>06</p></div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
