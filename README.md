@@ -1,61 +1,79 @@
 # TechyDeck
 
-TechyDeck is a static editor for HTML presentations. People build decks as HTML with Claude, ChatGPT, or Cursor. After the file is shared, a colleague still cannot fix a typo, change a number, or reorder slides without going back to the chatbot.
+TechyDeck imports an HTML presentation you already have. It is not another deck generator. A colleague can correct a number, replace a picture, or leave a comment on that element, then hand the same file back. Calculators, inline scripts, and SVG charts stay in the file. They are not flattened into a screenshot.
 
-Open the file here, click what is wrong, and hand it back as one HTML file, a PDF, or a link. There is no account and no server. The deck stays in the browser unless you copy a share link.
+The live site is [https://jaalbin222.github.io/TechyDeck/](https://jaalbin222.github.io/TechyDeck/). It is **local mode**. GitHub Pages only serves files. It cannot store one shared copy or decide who may edit.
 
-## Run it
+## Local mode and shared mode
 
-GitHub Pages can serve this repository as-is. There is no build step.
+| | Local mode (live on Pages) | Shared mode (companion server) |
+| --- | --- | --- |
+| Where it runs | The static site | `node server/server.js` on a machine you control, then paste its URL in the editor |
+| Text, image, slide edits | Yes, in this browser | Yes, for owner and editor |
+| Anchored comments | Yes, in this browser | Yes, for owner, editor, and commenter |
+| Revision list and restore | Yes, in this browser | Yes, on the server. Restore adds a new head and keeps older revisions |
+| One document, several people | No | Yes, when the server is running |
+| Permissions | The person at the keyboard is the owner | Owner, editor, commenter, viewer, checked on the server |
+| Snapshot link | A frozen copy in the URL. Not collaboration | Still a copy. Invites are the shared path |
 
-1. On GitHub, open **Settings → Pages**.
-2. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
-3. Choose branch **main** and folder **/ (root)**. Save.
-4. Wait for the Pages deployment. The site will be at `https://<user>.github.io/techydeck/` (or `https://<user>.github.io/<repo>/` if the repository name differs).
+Nothing on the public site uploads a deck. Connecting a server is explicit: open **Connect a shared server**, paste `http://127.0.0.1:8787` (or your host), and check it. **Publish shared** creates one document and returns an owner token to this browser. **Invite editor / commenter / viewer** makes a link whose token is the permission. A viewer’s save is rejected by the server. A commenter can add a comment and cannot change the HTML.
 
-`index.html` is the landing page. `app.html` is the editor. Links are relative, so a project site in a subpath works.
+There is no hosted TechyDeck database. Do not point the app at a public writable inbox. The server binds to `127.0.0.1` unless you set `HOST`. Putting real customer decks on an open server is your decision and needs HTTPS plus a host you administer.
 
-To preview on your own machine, serve the folder over HTTP. Opening the files directly (`file://`) blocks the sample decks, because browsers will not `fetch` local files that way.
+```bash
+node server/server.js
+```
+
+`PORT` defaults to 8787. `TECHYDECK_DATA` is the folder for document files (default `server/data/`, gitignored). Tokens are stored as SHA-256 hashes. `node server/test-api.js` checks roles, conflict responses, and restore.
+
+## What you can edit
+
+Supported structures, detected in this order:
+
+1. Direct child `section` elements inside `.reveal .slides` (reveal.js markup).
+2. Two or more sibling elements with class `slide`.
+3. Two or more sibling `section` elements.
+4. Otherwise the file is one document. Text and images can still be edited. Slide buttons stay hidden.
+
+Editable targets are leaf elements that contain only text, and `img` elements outside inline SVG. Each one gets a stable `data-td-anchor`. Comments point at that anchor, so they follow the element when you reorder slides and come back after reload or export.
+
+Buttons, inputs, and scripts are not editable text. Clicks on them still run the deck. A text edit updates that element in the source file. It does not reserialize whatever the script has drawn on screen. The next reload runs the original script again.
+
+## What is not supported
+
+- React, Vue, or any runtime that hydrates from a bundle and will break if the markup changes.
+- A full reveal.js runtime that positions slides itself. The Fieldnote sample is reveal.js *markup* with TechyDeck’s own CSS.
+- Shadow DOM, canvas pixels, and text inside SVG. SVG stays in the file; a caption next to it can be edited.
+- `document.write`, or a deck whose Content-Security-Policy blocks the editor script.
+- Every widget. `designMode` is not used, so we do not try to edit arbitrary controls.
+- Relative images and stylesheets. They resolve against the TechyDeck page, not the folder the file came from. Absolute URLs and data URLs work. Replaced images become data URLs.
+- Page numbers written into the HTML. Reordering does not rewrite them.
+- Live collaboration inside one cursor. A newer shared save shows a banner. It does not steal focus or reload under your typing.
+
+## Security
+
+Uploaded HTML is untrusted. It runs in a sandboxed iframe without `allow-same-origin`, so its scripts cannot read TechyDeck’s `localStorage`, session, or tokens. Messages are accepted only from that iframe, and only as small edit or comment requests for an anchor that already exists. A script in the deck cannot swap in a different document.
+
+A script that shares the iframe can still try to send an edit for a real anchor, because it lives in the same frame as the editor bridge. It cannot see parent storage. It can contact the network. Open files you trust.
+
+The editor does not ask you to paste a GitHub token, and the public site does not contain one.
+
+## Samples
+
+- Q3 board review: `.slide` sections.
+- Fieldnote launch: reveal.js sections.
+- Pricing calculator: inline script, still clickable after a text edit.
+- SVG chart: a chart plus a caption.
+- One-page note: no slide markup.
+
+## Pages
+
+GitHub Pages is already serving this repository from `main` at the site root: [https://jaalbin222.github.io/TechyDeck/](https://jaalbin222.github.io/TechyDeck/). Links are relative, so the project path works. There is no build step.
+
+To preview locally:
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Then open <http://localhost:8080>.
-
-## Use the editor
-
-- **Upload or paste** an HTML file, or open one of the samples: a Q3 board review (`.slide` sections) and a Fieldnote launch (reveal.js sections). A one-page note shows what happens when the file is not a deck.
-- **Edit.** Click text to change it. Click an image to replace it. The replacement is embedded in the file.
-- **Slides.** Delete, duplicate, and reorder when the HTML has reveal.js sections (`.reveal .slides > section`), two or more sibling `.slide` elements, or two or more sibling `section` elements. Otherwise the page is one document.
-- **Undo / redo.** Ctrl+Z and Ctrl+Shift+Z (Cmd on macOS), or the toolbar buttons. History is kept for the session.
-- **Autosave.** The current deck is written to `localStorage` in this browser. Use **Open → Continue** after a refresh. **Discard** removes that copy.
-- **Export HTML.** Downloads one file with the edits. Editor scripts are not included.
-- **Export PDF.** Opens the browser print dialog. Turn on background graphics, then choose **Save as PDF**. Slides are laid out one per landscape page.
-- **Share.** Compresses the deck with [lz-string](https://github.com/pieroxy/lz-string) into the URL hash (`#d=…`). The recipient opens TechyDeck with that deck ready to edit. Nothing is uploaded. If the compressed link is over 48 KB, TechyDeck refuses the link and offers the download instead.
-
-The address bar after you start editing is not itself a share link. Use **Share** to copy one. A share link contains the whole deck; do not post it in a public channel if the material is confidential.
-
-## Layout
-
-```
-index.html          landing page
-app.html            editor
-css/                site, landing, editor, and in-frame styles
-js/app.js           editor
-js/editor-runtime.js  injected into the sandboxed deck frame
-js/lz-string.js     vendored compression (WTFPL)
-samples/            two self-contained decks
-```
-
-## Limitations
-
-- Decks render in a sandboxed iframe. Their scripts run, but they cannot read TechyDeck’s saved data. A deck you do not trust can still contact the network. Open HTML you trust. A Content-Security-Policy inside the file can block the editor script.
-- Relative image and stylesheet URLs resolve against the TechyDeck page, not the folder the file originally lived in. Absolute URLs and data URLs work. Replaced images become data URLs.
-- Text has to sit in its own element (a heading, paragraph, span, or similar). A click on empty padding does nothing. Background images are not replaceable; `<img>` elements are.
-- Decks that show and hide slides with their own JavaScript (a full reveal.js runtime, for example) can fight the one-slide editor. Static HTML — the kind most chatbots emit — works. The Fieldnote sample uses reveal.js *markup* only.
-- Page numbers written into the slide HTML are not rewritten when you reorder slides.
-- Share links live in the URL hash. Very large decks, especially after big images, will not fit. Download the file instead.
-- Autosave is per browser, on this machine. Clearing site data clears the deck. The undo stack is trimmed if storage is tight; the latest document is what must fit.
-- PDF export depends on the browser’s print dialog. Background colors print only if “background graphics” is enabled.
-- There is no multiplayer editing. A share link is a copy, taken at the moment you clicked Share.
+Opening the files with `file://` blocks the samples.

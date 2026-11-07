@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bookings chart</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f4f7fb; color: #172033; font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+    main { min-height: 100vh; padding: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+    h1 { font-size: 40px; margin: 0 0 8px; }
+    svg { width: 100%; height: auto; background: white; border-radius: 12px; }
+    button { font: inherit; margin-top: 12px; padding: 8px 12px; border-radius: 999px; border: 1px solid #1d4e89; background: #1d4e89; color: white; }
+  </style>
+</head>
+<body>
+  <main>
+    <div>
+      <h1>Bookings</h1>
+      <p id="caption">Enterprise closed $6.2M.</p>
+      <button type="button" id="highlight">Highlight enterprise</button>
+    </div>
+    <svg viewBox="0 0 320 180" role="img" aria-label="Bar chart of bookings">
+      <rect id="bar-a" x="40" y="90" width="40" height="60" fill="#1e4d38"></rect>
+      <rect id="bar-b" x="120" y="60" width="40" height="90" fill="#1e4d38"></rect>
+      <rect id="bar-c" x="200" y="40" width="40" height="110" fill="#9a3f1d"></rect>
+    </svg>
+  </main>
+  <script>
+    document.getElementById("highlight").addEventListener("click", function () {
+      var bar = document.getElementById("bar-c");
+      bar.setAttribute("fill", bar.getAttribute("fill") === "#0b3a73" ? "#9a3f1d" : "#0b3a73");
+    });
+  </script>
+</body>
+</html>

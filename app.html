@@ -21,10 +21,12 @@
       <span>TechyDeck</span>
     </a>
     <p class="deck-name editor-only" id="deck-name"></p>
-    <p class="toolbar-note start-only">Files stay in this browser.</p>
+    <p class="mode-pill" id="mode-pill">Local mode</p>
+    <p class="toolbar-note start-only">Files stay in this browser until you connect a server.</p>
     <span class="spacer"></span>
     <div class="seg editor-only" role="group" aria-label="Editing mode">
       <button type="button" id="btn-edit" aria-pressed="true">Edit</button>
+      <button type="button" id="btn-comment" aria-pressed="false">Comment</button>
       <button type="button" id="btn-preview" aria-pressed="false">Preview</button>
     </div>
     <div class="tool-group editor-only">
@@ -34,7 +36,8 @@
     <div class="tool-group editor-only">
       <button type="button" class="btn btn-ghost" id="btn-export">Export HTML</button>
       <button type="button" class="btn btn-ghost" id="btn-pdf">Export PDF</button>
-      <button type="button" class="btn btn-primary" id="btn-share">Share</button>
+      <button type="button" class="btn btn-ghost" id="btn-publish">Publish shared</button>
+      <button type="button" class="btn btn-primary" id="btn-share">Snapshot link</button>
     </div>
     <button type="button" class="btn btn-ghost editor-only" id="btn-open">Open</button>
   </header>
@@ -47,12 +50,27 @@
       </div>
       <ol id="slide-list"></ol>
       <p class="doc-note" id="doc-note" hidden>This file is one continuous document. Slide actions appear when the HTML has two or more sibling <code>.slide</code> or <code>section</code> elements, or reveal.js sections.</p>
+      <section class="comments" aria-labelledby="comments-heading">
+        <h2 id="comments-heading">Comments</h2>
+        <ul id="comment-list"></ul>
+        <form id="comment-form" hidden>
+          <p class="fine">Anchored to <span id="comment-target"></span></p>
+          <label class="fine" for="comment-body">Comment</label>
+          <textarea id="comment-body" required maxlength="4000"></textarea>
+          <button type="submit" class="btn btn-primary">Add comment</button>
+        </form>
+        <label class="fine" id="alt-row" hidden>Alt text
+          <input id="image-alt" type="text" maxlength="200" autocomplete="off">
+        </label>
+        <h2>Revisions</h2>
+        <ul id="rev-list"></ul>
+      </section>
     </aside>
     <div class="main">
       <section class="start start-only" aria-labelledby="start-title">
         <div class="start-card">
           <h1 id="start-title">Open a deck</h1>
-          <p class="lede">Upload or paste the HTML an AI wrote. Edit it here, then export a file or a link the next person can keep editing.</p>
+          <p class="lede">Import an HTML deck you already have. Fix a number or a picture, leave a comment on that element, and export the same file. This page does not generate a new deck.</p>
           <div class="resume" id="resume-card" hidden>
             <p id="resume-meta">A deck is saved in this browser.</p>
             <div class="row">
@@ -77,7 +95,27 @@
               <strong>Fieldnote launch</strong>
               <span>Six reveal.js sections and a price to change.</span>
             </button>
+            <button type="button" class="sample-card" data-sample="calculator">
+              <span class="eyebrow">Sample</span>
+              <strong>Pricing calculator</strong>
+              <span>Inline script keeps working after a text edit.</span>
+            </button>
+            <button type="button" class="sample-card" data-sample="chart">
+              <span class="eyebrow">Sample</span>
+              <strong>SVG chart</strong>
+              <span>A chart drawn in SVG, with one editable caption.</span>
+            </button>
           </div>
+          <details class="server-box">
+            <summary>Connect a shared server</summary>
+            <p class="fine">GitHub Pages only serves files. It cannot store one shared copy or enforce who may edit. Run <code>node server/server.js</code> on a machine you control, then paste its URL. No token belongs in the page source.</p>
+            <div class="row">
+              <label class="fine" for="api-base">Server URL</label>
+              <input id="api-base" type="url" placeholder="http://127.0.0.1:8787" autocomplete="off">
+              <button type="button" class="btn btn-ghost" id="api-save">Check server</button>
+            </div>
+            <p class="fine" id="api-status" role="status"></p>
+          </details>
           <div class="paste-block">
             <span class="section-label">Paste HTML</span>
             <textarea id="paste-html" spellcheck="false" placeholder="<!DOCTYPE html>…"></textarea>
@@ -89,6 +127,11 @@
           </div>
         </div>
       </section>
+      <div class="conflict editor-only" id="conflict" hidden>
+        <p id="conflict-msg"></p>
+        <button type="button" class="btn btn-primary" id="conflict-load">Load their version</button>
+        <button type="button" class="btn btn-ghost" id="conflict-keep">Save my version over theirs</button>
+      </div>
       <section class="stage editor-only" aria-label="Deck">
         <div class="frame-shell">
           <iframe id="deck-frame" title="Deck" sandbox="allow-scripts allow-modals allow-forms allow-popups allow-downloads"></iframe>
@@ -111,9 +154,14 @@
   <p id="toast" role="status" hidden></p>
 
   <dialog id="share-dialog" aria-labelledby="share-title">
-    <h2 id="share-title">Share an editable link</h2>
+    <h2 id="share-title">Hand off a copy, or invite to the shared document</h2>
+    <div class="row">
+      <button type="button" class="btn btn-ghost" id="btn-invite-editor">Invite editor</button>
+      <button type="button" class="btn btn-ghost" id="btn-invite-commenter">Invite commenter</button>
+      <button type="button" class="btn btn-ghost" id="btn-invite-viewer">Invite viewer</button>
+    </div>
     <div id="share-ok">
-      <p>Anyone with this link can open the deck and keep editing. TechyDeck does not upload it — the deck is inside the link. Don’t post it publicly if the material is confidential.</p>
+      <p>A snapshot link is a copy frozen at this moment. It is not one shared version. Invites work only when this browser is connected to a TechyDeck server. Don’t post a private deck in public.</p>
       <input id="share-url" type="text" readonly aria-label="Share link">
       <div class="row">
         <button type="button" class="btn btn-primary" id="share-copy">Copy link</button>
@@ -131,6 +179,7 @@
   </dialog>
 
   <script src="js/lz-string.js"></script>
+  <script src="js/shared-config.js"></script>
   <script src="js/app.js"></script>
   <noscript>TechyDeck needs JavaScript. Decks are edited in your browser and are not uploaded.</noscript>
 </body>

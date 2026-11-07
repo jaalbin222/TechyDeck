@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pricing calculator</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #f6f3ec; color: #1a2420; font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+    section { min-height: 100vh; height: 100vh; padding: 40px 56px; display: flex; flex-direction: column; justify-content: center; }
+    h1 { font-family: Georgia, serif; font-weight: 500; font-size: 48px; margin: 0 0 12px; }
+    p { font-size: 20px; max-width: 36rem; }
+    button { font: inherit; padding: 10px 14px; margin-right: 8px; border-radius: 999px; border: 1px solid #1e4d38; background: #1e4d38; color: #f6f3ec; }
+    #out { font-size: 40px; font-family: Georgia, serif; }
+  </style>
+</head>
+<body>
+  <section class="slide">
+    <p>List price</p>
+    <h1>$24 per seat</h1>
+    <p>The buttons below are part of the deck. Editing this sentence should not stop them.</p>
+  </section>
+  <section class="slide">
+    <h1>Try the calculator</h1>
+    <p id="out">Total $24</p>
+    <p>
+      <button type="button" id="minus">Remove a seat</button>
+      <button type="button" id="plus">Add a seat</button>
+    </p>
+  </section>
+  <script>
+    (function () {
+      var seats = 1;
+      var price = 24;
+      function render() {
+        var out = document.getElementById("out");
+        if (out) out.textContent = "Total $" + (seats * price);
+      }
+      var plus = document.getElementById("plus");
+      var minus = document.getElementById("minus");
+      if (plus) plus.addEventListener("click", function () { seats += 1; render(); });
+      if (minus) minus.addEventListener("click", function () { seats = Math.max(1, seats - 1); render(); });
+      render();
+    })();
+  </script>
+</body>
+</html>

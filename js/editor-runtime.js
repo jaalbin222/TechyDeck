@@ -1,9 +1,11 @@
-/* Runs inside the sandboxed deck iframe. Talks to the parent only via postMessage. */
+/* Runs inside the sandboxed deck iframe. Edits are anchor deltas, never a dump of the live DOM. */
 (function () {
   var parentOrigin = window.__TD_PARENT_ORIGIN__ || "*";
   var editing = document.documentElement.classList.contains("td-editing");
+  var commenting = false;
   var hoverEl = null;
   var sendTimer = 0;
+  var pendingEl = null;
 
   function post(msg) {
     msg.token = window.__TD_TOKEN__ || 0;
@@ -12,47 +14,6 @@
     } catch (err) {
       parent.postMessage(msg, "*");
     }
-  }
-
-  function stripOurClasses(el) {
-    el.classList.remove("td-slide", "td-active", "td-hover", "td-print-slide");
-    if (!el.getAttribute("class")) el.removeAttribute("class");
-  }
-
-  function cleanClone() {
-    var root = document.documentElement.cloneNode(true);
-    root.querySelectorAll("[data-techydeck]").forEach(function (node) {
-      node.remove();
-    });
-    root.querySelectorAll("[data-td-forced-display]").forEach(function (node) {
-      node.style.removeProperty("display");
-      node.style.removeProperty("visibility");
-      node.style.removeProperty("opacity");
-      if (!node.getAttribute("style")) node.removeAttribute("style");
-      node.removeAttribute("data-td-forced-display");
-    });
-    root.querySelectorAll("[data-td-slide], [data-td-img], [contenteditable]").forEach(function (node) {
-      node.removeAttribute("data-td-slide");
-      node.removeAttribute("data-td-img");
-      node.removeAttribute("contenteditable");
-      stripOurClasses(node);
-    });
-    root.querySelectorAll(".td-hover, .td-slide, .td-active, .td-print-slide").forEach(stripOurClasses);
-    root.classList.remove("td-slide-host", "td-editing", "td-printing");
-    if (!root.getAttribute("class")) root.removeAttribute("class");
-    return "<!DOCTYPE html>\n" + root.outerHTML;
-  }
-
-  function send(immediate) {
-    clearTimeout(sendTimer);
-    post({ type: "td:change", html: cleanClone(), immediate: !!immediate });
-  }
-
-  function scheduleSend() {
-    clearTimeout(sendTimer);
-    sendTimer = setTimeout(function () {
-      send(false);
-    }, 350);
   }
 
   function asElement(target) {
@@ -68,53 +29,21 @@
     return false;
   }
 
-  function hasBlockChild(el) {
-    var kids = el.children;
-    for (var i = 0; i < kids.length; i++) {
-      var display = window.getComputedStyle(kids[i]).display;
-      if (
-        display === "block" ||
-        display === "flex" ||
-        display === "grid" ||
-        display === "list-item" ||
-        display === "table" ||
-        display === "flow-root"
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   var SKIP = {
-    SCRIPT: 1,
-    STYLE: 1,
-    NOSCRIPT: 1,
-    IFRAME: 1,
-    OBJECT: 1,
-    SVG: 1,
-    PATH: 1,
-    TEXTAREA: 1,
-    INPUT: 1,
-    SELECT: 1,
-    OPTION: 1,
-    CANVAS: 1,
-    VIDEO: 1,
-    AUDIO: 1,
-    HEAD: 1,
-    HTML: 1,
-    BODY: 1,
-    META: 1,
-    LINK: 1
+    SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, IFRAME: 1, OBJECT: 1, SVG: 1, PATH: 1,
+    TEXTAREA: 1, INPUT: 1, SELECT: 1, OPTION: 1, CANVAS: 1, VIDEO: 1, AUDIO: 1,
+    HEAD: 1, HTML: 1, BODY: 1, META: 1, LINK: 1, BUTTON: 1, LABEL: 1
   };
 
-  function findEditable(target) {
+  function findLeaf(target) {
     var el = asElement(target);
-    if (!el || (el.closest && el.closest("[data-techydeck]"))) return null;
+    if (!el || (el.closest && el.closest("[data-techydeck], svg, script, style"))) return null;
     while (el && el !== document.body && el !== document.documentElement) {
       if (SKIP[el.tagName]) return null;
       if (el.tagName === "IMG") return null;
-      if (hasDirectText(el) && !hasBlockChild(el)) return el;
+      if (el.getAttribute("data-td-kind") === "text" && el.getAttribute("data-td-anchor") && !el.children.length && hasDirectText(el)) {
+        return el;
+      }
       el = el.parentElement;
     }
     return null;
@@ -164,7 +93,39 @@
     return 0;
   }
 
+  function anchorOf(el) {
+    return el ? el.getAttribute("data-td-anchor") || "" : "";
+  }
+
+  function sendText(el, immediate) {
+    var anchor = anchorOf(el);
+    if (!anchor) return;
+    post({
+      type: "td:text",
+      anchor: anchor,
+      text: el.textContent,
+      immediate: !!immediate
+    });
+  }
+
+  function flushPending(immediate) {
+    clearTimeout(sendTimer);
+    if (pendingEl && pendingEl.isConnected) sendText(pendingEl, immediate);
+    pendingEl = null;
+  }
+
+  function scheduleText(el) {
+    pendingEl = el;
+    clearTimeout(sendTimer);
+    sendTimer = setTimeout(function () { flushPending(false); }, 350);
+  }
+
   function replaceImage(img) {
+    var anchor = anchorOf(img);
+    if (!anchor) {
+      post({ type: "td:toast", message: "This image is not in an editable part of the file." });
+      return;
+    }
     var picker = document.createElement("input");
     picker.type = "file";
     picker.accept = "image/*";
@@ -179,59 +140,100 @@
         post({ type: "td:toast", message: "Choose an image file." });
         return;
       }
+      if (file.size > 1500000) {
+        post({ type: "td:toast", message: "That image is over 1.5 MB. Choose a smaller one so the deck stays easy to save." });
+        return;
+      }
       var reader = new FileReader();
       reader.onload = function () {
-        img.setAttribute("src", String(reader.result));
+        var src = String(reader.result || "");
+        img.setAttribute("src", src);
         img.removeAttribute("srcset");
-        if (file.size > 1500000) {
-          post({
-            type: "td:toast",
-            message: "Image added. It is large, so a share link may not fit. Download the HTML if sharing fails."
-          });
-        }
-        send(true);
+        post({ type: "td:image", anchor: anchor, src: src, alt: img.getAttribute("alt") || "" });
       };
       reader.readAsDataURL(file);
     });
     picker.click();
   }
 
+  function highlightAnchor(anchor) {
+    var el = document.querySelector('[data-td-anchor="' + anchor + '"]');
+    if (!el) return;
+    var slides = document.querySelectorAll("[data-td-slide]");
+    for (var i = 0; i < slides.length; i++) {
+      if (slides[i] === el || slides[i].contains(el)) showSlide(i);
+    }
+    setHover(el);
+    try { el.scrollIntoView({ block: "center", inline: "nearest" }); } catch (err) { el.scrollIntoView(); }
+  }
+
   document.addEventListener("pointerdown", function (event) {
-    if (!editing) return;
+    if (!editing || commenting) return;
     var el = asElement(event.target);
     if (!el || (el.closest && el.closest("[data-techydeck]"))) return;
     if (el.closest && el.closest("img")) return;
-    var editable = findEditable(event.target);
+    var editable = findLeaf(event.target);
     if (!editable) return;
+    if (pendingEl && pendingEl !== editable) flushPending(false);
     editable.setAttribute("contenteditable", "true");
+    post({ type: "td:focus", anchor: anchorOf(editable) });
   }, true);
 
   document.addEventListener("click", function (event) {
-    if (!editing) return;
     var el = asElement(event.target);
-    if (!el) return;
+    if (!el || (el.closest && el.closest("[data-techydeck]"))) return;
+    if (commenting) {
+      var target = (el.closest && el.closest("[data-td-anchor]")) || findLeaf(el);
+      var imgTarget = el.closest && el.closest("img");
+      if (imgTarget) target = imgTarget;
+      if (!target || !anchorOf(target)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      post({
+        type: "td:comment-target",
+        anchor: anchorOf(target),
+        preview: (target.getAttribute("alt") || target.textContent || "Image").replace(/\s+/g, " ").trim().slice(0, 80)
+      });
+      return;
+    }
+    if (!editing) return;
     var img = el.closest && el.closest("img");
-    if (img) {
+    if (img && img.getAttribute("data-td-kind") === "image") {
       event.preventDefault();
       event.stopPropagation();
       replaceImage(img);
       return;
     }
-    if (el.closest && el.closest("a, button")) event.preventDefault();
+    if (el.closest && el.closest("a")) event.preventDefault();
+  }, true);
+
+  document.addEventListener("paste", function (event) {
+    var el = event.target;
+    if (!el || !el.getAttribute || el.getAttribute("contenteditable") !== "true") return;
+    event.preventDefault();
+    var text = "";
+    if (event.clipboardData) text = event.clipboardData.getData("text/plain") || "";
+    text = text.replace(/\r\n/g, "\n").replace(/\n/g, " ");
+    try { document.execCommand("insertText", false, text); } catch (err) { el.textContent += text; }
+    scheduleText(el);
   }, true);
 
   document.addEventListener("keydown", function (event) {
     var meta = event.metaKey || event.ctrlKey;
     if (meta && (event.key === "z" || event.key === "Z")) {
-      event.preventDefault();
-      send(true);
-      post({ type: event.shiftKey ? "td:redo" : "td:undo" });
+      if (event.target && event.target.getAttribute && event.target.getAttribute("contenteditable") === "true") {
+        event.preventDefault();
+        flushPending(true);
+        post({ type: event.shiftKey ? "td:redo" : "td:undo" });
+      }
       return;
     }
     if (meta && (event.key === "y" || event.key === "Y")) {
-      event.preventDefault();
-      send(true);
-      post({ type: "td:redo" });
+      if (event.target && event.target.getAttribute && event.target.getAttribute("contenteditable") === "true") {
+        event.preventDefault();
+        flushPending(true);
+        post({ type: "td:redo" });
+      }
       return;
     }
     if (meta && (event.key === "p" || event.key === "P")) {
@@ -239,44 +241,47 @@
       post({ type: "td:print" });
       return;
     }
-    if (!editing) return;
+    if (!editing || commenting) return;
     var inField = event.target && event.target.getAttribute && event.target.getAttribute("contenteditable") === "true";
     if (!inField) {
       if (event.key === "ArrowRight" || event.key === "PageDown") showSlide(currentSlide() + 1);
       if (event.key === "ArrowLeft" || event.key === "PageUp") showSlide(currentSlide() - 1);
       return;
     }
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter") {
       event.preventDefault();
       event.target.blur();
-    } else if (event.key === "Enter" && event.shiftKey) {
-      event.preventDefault();
-      document.execCommand("insertLineBreak");
-      scheduleSend();
     } else if (event.key === "Escape") {
       event.target.blur();
     }
   }, true);
 
-  document.addEventListener("input", function () {
-    if (editing) scheduleSend();
+  document.addEventListener("input", function (event) {
+    if (!editing || commenting) return;
+    var el = event.target;
+    if (!el || el.getAttribute("contenteditable") !== "true") return;
+    scheduleText(el);
   });
 
   document.addEventListener("focusout", function (event) {
     var el = event.target;
     if (!el || !el.getAttribute || el.getAttribute("contenteditable") !== "true") return;
     el.removeAttribute("contenteditable");
-    send(false);
+    if (pendingEl === el) pendingEl = el;
+    flushPending(false);
+    post({ type: "td:blur" });
   });
 
   document.addEventListener("mouseover", function (event) {
-    if (!editing) {
+    if (!editing && !commenting) {
       setHover(null);
       return;
     }
     var el = asElement(event.target);
-    var img = el && el.closest && el.closest("img");
-    setHover(img || findEditable(event.target));
+    var img = el && el.closest && el.closest("img[data-td-kind='image']");
+    var leaf = findLeaf(event.target);
+    var marked = el && el.closest && el.closest("[data-td-anchor]");
+    setHover(img || leaf || (commenting ? marked : null));
   });
 
   window.addEventListener("message", function (event) {
@@ -284,17 +289,23 @@
     var msg = event.data || {};
     if (msg.type === "td:slide") showSlide(msg.index | 0);
     if (msg.type === "td:mode") {
-      editing = !!msg.editing;
+      editing = !!msg.editing && !msg.commenting;
+      commenting = !!msg.commenting;
       document.documentElement.classList.toggle("td-editing", editing);
+      document.documentElement.classList.toggle("td-commenting", commenting);
       if (!editing) {
         setHover(null);
+        flushPending(true);
         document.querySelectorAll("[contenteditable='true']").forEach(function (el) {
           el.removeAttribute("contenteditable");
         });
-        send(true);
       }
     }
-    if (msg.type === "td:flush") send(true);
+    if (msg.type === "td:show-anchor" && typeof msg.anchor === "string") highlightAnchor(msg.anchor);
+    if (msg.type === "td:alt" && typeof msg.anchor === "string") {
+      var img = document.querySelector('img[data-td-anchor="' + msg.anchor + '"]');
+      if (img && typeof msg.alt === "string") img.setAttribute("alt", msg.alt);
+    }
   });
 
   window.addEventListener("beforeprint", function () {
@@ -304,11 +315,5 @@
     document.documentElement.classList.remove("td-printing");
   });
 
-  var readyHtml = "";
-  try {
-    readyHtml = cleanClone();
-  } catch (err) {
-    readyHtml = "";
-  }
-  post({ type: "td:ready", html: readyHtml });
+  post({ type: "td:ready" });
 })();
