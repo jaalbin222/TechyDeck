@@ -2,7 +2,7 @@
 
 TechyDeck imports an HTML presentation you already have. It is not another deck generator. A colleague can correct a number, replace a picture, or leave a comment on that element, then hand the same file back. Calculators, inline scripts, and SVG charts stay in the file. They are not flattened into a screenshot.
 
-The live site is [https://jaalbin222.github.io/TechyDeck/](https://jaalbin222.github.io/TechyDeck/). It is **local mode**. GitHub Pages only serves files. It cannot store one shared copy or decide who may edit.
+The live site is [https://jaalbin222.github.io/TechyDeck/](https://jaalbin222.github.io/TechyDeck/). Open [the demo](https://jaalbin222.github.io/TechyDeck/demo.html) to walk a sample deck in about a minute. The [editor](https://jaalbin222.github.io/TechyDeck/app.html) is the fuller local-mode tool. GitHub Pages only serves files. It cannot store one shared copy or decide who may edit.
 
 ## Local mode and shared mode
 

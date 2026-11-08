@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Northline Q4 working plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520;9..144,620&family=Outfit:wght@380;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1b1916;
+      --cream: #f6f3ec;
+      --copper: #9a4e2c;
+      --muted: #6a645c;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--cream); color: var(--ink); }
+    body { font-family: Outfit, "Segoe UI", sans-serif; }
+    .slide {
+      min-height: 100%;
+      height: 100%;
+      padding: clamp(22px, 4vw, 56px) clamp(22px, 5vw, 64px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--cream);
+      overflow: auto;
+    }
+    .kicker {
+      margin: 0 0 14px;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--copper);
+    }
+    h1 {
+      margin: 0;
+      font-family: Fraunces, Georgia, serif;
+      font-weight: 520;
+      font-size: clamp(36px, 5vw, 68px);
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+    }
+    .sub { margin: 18px 0 0; max-width: 28rem; font-size: 18px; line-height: 1.45; color: #3f3b36; }
+    .fine { margin: 28px 0 0; font-size: 13px; color: var(--muted); }
+    .cover { background: #171512; color: #f6f3ec; }
+    .cover .kicker { color: #e2b394; }
+    .cover .sub, .cover .fine { color: #d9d3c8; }
+    .rule { width: 48px; height: 2px; background: #e2b394; margin: 22px 0; border: 0; }
+    .figure {
+      margin: 8px 0 0;
+      font-family: Fraunces, Georgia, serif;
+      font-weight: 620;
+      font-size: clamp(64px, 10vw, 112px);
+      letter-spacing: -0.045em;
+      line-height: 0.95;
+    }
+    .was { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
+    .calc { display: flex; align-items: center; gap: 18px; margin-top: 18px; }
+    button.step {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1px solid #d9d1c4; background: white; color: var(--ink);
+      font-size: 22px;
+    }
+    #out {
+      margin: 0;
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(40px, 6vw, 64px);
+      letter-spacing: -0.04em;
+    }
+    .chart-row { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center; }
+    svg { width: 100%; height: auto; }
+    button.quiet {
+      margin-top: 16px; border: 0; background: transparent; color: var(--copper);
+      padding: 0; font-size: 14px; letter-spacing: 0.04em;
+    }
+    .asks { display: grid; gap: 12px; margin-top: 22px; max-width: 36rem; }
+    .ask { background: white; border-radius: 14px; padding: 16px 18px; border: 1px solid #e6dfd4; }
+    .ask strong { display: block; font-family: Fraunces, Georgia, serif; font-size: 22px; font-weight: 520; }
+    .ask span { color: var(--muted); font-size: 14px; }
+    @media (max-width: 700px), (max-height: 560px) {
+      .chart-row { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+      .figure { font-size: 56px; }
+      .slide { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide cover">
+    <p class="kicker">Northline · fictional</p>
+    <h1>The deck is already written.</h1>
+    <hr class="rule">
+    <p class="sub">Your team only has to fix the number, leave a note, and keep the calculator working.</p>
+    <p class="fine">Sample data. Not a real company.</p>
+  </section>
+
+  <section class="slide">
+    <p class="kicker">Pipeline</p>
+    <h1>The figure we will say out loud.</h1>
+    <p class="figure">$4.8M</p>
+    <p class="was">The draft still said $5.1M. Click the figure and replace it.</p>
+  </section>
+
+  <section class="slide">
+    <p class="kicker">Seats</p>
+    <h1>Price stays in the script.</h1>
+    <p class="sub">Each seat is $36. The buttons multiply that. Editing the sentence does not break them.</p>
+    <div class="calc">
+      <button type="button" class="step" id="minus" aria-label="Remove a seat">−</button>
+      <p id="out">Total $432</p>
+      <button type="button" class="step" id="plus" aria-label="Add a seat">+</button>
+    </div>
+    <p class="fine">Starts at 12 seats. Sample arithmetic only.</p>
+  </section>
+
+  <section class="slide">
+    <div class="chart-row">
+      <div>
+        <p class="kicker">Mix</p>
+        <h1>Services is the short bar.</h1>
+        <p class="sub">The drawing is SVG. The caption beside it is ordinary text.</p>
+        <button type="button" class="quiet" id="emphasize">Emphasize services</button>
+      </div>
+      <svg viewBox="0 0 280 180" role="img" aria-label="Three bars. Services is the shortest.">
+        <rect x="24" y="70" width="48" height="80" rx="6" fill="#1b1916"></rect>
+        <rect x="108" y="40" width="48" height="110" rx="6" fill="#1b1916"></rect>
+        <rect id="services" x="192" y="100" width="48" height="50" rx="6" fill="#9a4e2c"></rect>
+      </svg>
+    </div>
+  </section>
+
+  <section class="slide">
+    <p class="kicker">Before you leave</p>
+    <h1>Two decisions.</h1>
+    <div class="asks">
+      <div class="ask"><strong>Hold $36.</strong><span>Do not discount in the room.</span></div>
+      <div class="ask"><strong>Say $4.8M.</strong><span>Only after someone has typed it.</span></div>
+    </div>
+    <p class="fine">Export the file, or share a copy. This demo does not invite a live teammate.</p>
+  </section>
+
+  <script>
+    (function () {
+      var seats = 12;
+      var price = 36;
+      function render() {
+        var out = document.getElementById("out");
+        if (out) out.textContent = "Total $" + (seats * price);
+      }
+      var plus = document.getElementById("plus");
+      var minus = document.getElementById("minus");
+      if (plus) plus.addEventListener("click", function () { seats += 1; render(); });
+      if (minus) minus.addEventListener("click", function () { seats = Math.max(1, seats - 1); render(); });
+      var emphasize = document.getElementById("emphasize");
+      if (emphasize) emphasize.addEventListener("click", function () {
+        var bar = document.getElementById("services");
+        if (!bar) return;
+        var next = bar.getAttribute("fill") === "#1b1916" ? "#9a4e2c" : "#1b1916";
+        bar.setAttribute("fill", next);
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>

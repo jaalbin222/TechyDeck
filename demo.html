@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Northline demo — TechyDeck</title>
+  <meta name="description" content="A sample HTML deck you can correct in the browser. Edit a number, leave a note, and keep the calculator working.">
+  <meta name="theme-color" content="#e7e4dc">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+  <a class="skip" href="#stage">Skip to the deck</a>
+  <div class="app">
+    <header class="bar">
+      <a class="brand" href="index.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#1b1916"/><path d="M7 17V7h2.2l2.8 4.6L14.8 7H17v10h-1.8V10.2L12.4 15h-1.1L8.8 10.2V17z" fill="#f6f3ec"/></svg>
+        TechyDeck
+      </a>
+      <p class="deck-title" id="deck-title">Northline Q4</p>
+      <p class="status" id="status" role="status">Demo · saved in this browser</p>
+      <span class="spacer"></span>
+      <div class="tools" role="toolbar" aria-label="Deck tools">
+        <button type="button" id="btn-edit" aria-pressed="true">Edit</button>
+        <button type="button" id="btn-comment" aria-pressed="false">Comment</button>
+        <button type="button" id="btn-present">Present</button>
+        <button type="button" id="btn-undo" disabled>Undo</button>
+        <button type="button" id="btn-redo" disabled>Redo</button>
+        <button type="button" id="btn-export">Export</button>
+        <button type="button" id="btn-share">Share a copy</button>
+        <button type="button" id="btn-reset">Reset</button>
+        <label class="file">Open HTML
+          <input id="file" type="file" accept=".html,.htm,text/html">
+        </label>
+      </div>
+    </header>
+    <div class="workspace">
+      <main class="stage" id="stage">
+        <div class="shell">
+          <iframe id="frame" title="Sample presentation" sandbox="allow-scripts allow-modals"></iframe>
+          <div id="overlay">Opening the demo…</div>
+        </div>
+        <p class="coach" id="coach">Click <strong>$4.8M</strong> and type the figure you would actually say. <button type="button" id="coach-dismiss">Dismiss</button></p>
+      </main>
+      <aside class="notes" aria-labelledby="notes-heading">
+        <h2 id="notes-heading">Notes</h2>
+        <p class="fine">A sample note is already here. Notes you add stay in this browser.</p>
+        <ul id="notes"></ul>
+        <form id="note-form" hidden>
+          <label for="note-body">Note on <span id="note-target">this element</span></label>
+          <textarea id="note-body" maxlength="500" required></textarea>
+          <button type="submit">Add note</button>
+        </form>
+      </aside>
+    </div>
+    <nav class="thumbs" id="thumbs" aria-label="Slides"></nav>
+  </div>
+  <dialog id="share-dialog" aria-labelledby="share-title">
+    <h2 id="share-title">Share a copy</h2>
+    <p>This link opens a copy of the deck. It is not live coediting, and nobody else is in this demo.</p>
+    <input id="share-url" type="text" readonly aria-label="Copy link">
+    <div class="row">
+      <button type="button" class="primary" id="share-copy">Copy link</button>
+      <button type="button" id="share-close">Close</button>
+    </div>
+    <p class="fine" id="share-note"></p>
+  </dialog>
+  <script src="js/lz-string.js"></script>
+  <script src="js/demo.js"></script>
+</body>
+</html>
